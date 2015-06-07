@@ -1,0 +1,18 @@
+{% spaceless %}
+{% if compressed -%}
+    <script type="text/javascript">
+        var require = (function(){
+            var r=function(c){m(r.c,c)};r.c={};function m(a,b){
+                for (var i in b)b[i]!=null&&b[i].toString()==='[object Object]'?m(a[i]||(a[i]={}),b[i]):a[i]=b[i]}
+            return r;
+        }());
+        require = require.c;
+    </script>
+    <script type="text/javascript" src="{{ asset(build_path) }}"></script>
+{%- else -%}
+    <script type="text/javascript" src="{{ asset('bundles/ekynarequirejs/require.js') }}"></script>
+    <script type="text/javascript">
+        require.config({{ config|json_encode|raw }});
+    </script>
+{%- endif %}
+{% endspaceless %}

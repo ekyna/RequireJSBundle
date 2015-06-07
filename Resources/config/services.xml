@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <!-- Configuration provider -->
+        <service id="ekyna_require_js.configuration_provider" class="Ekyna\Bundle\RequireJsBundle\Configuration\Provider">
+            <argument type="service" id="router" />
+            <argument>%ekyna_require_js.config%</argument>
+            <argument>%kernel.bundles%</argument>
+        </service>
+
+        <!-- Twig extension -->
+        <service id="ekyna_require_js.twig.require_js_extension" class="Ekyna\Bundle\RequireJsBundle\Twig\RequireJsExtension">
+            <argument type="service" id="ekyna_require_js.configuration_provider" />
+            <argument>%ekyna_require_js.config%</argument>
+            <tag name="twig.extension" />
+        </service>
+
+    </services>
+
+</container>

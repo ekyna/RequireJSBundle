@@ -1,5 +1,5 @@
 {
-    "name" : "ekyna/requirejs-bundle",
+    "name" : "ekyna/require-js-bundle",
     "description" : "RequireJs for Symfony2",
     "type" : "symfony-bundle",
     "authors" : [{

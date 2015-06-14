@@ -98,7 +98,11 @@ class Provider
         if (!empty($config['paths']) && is_array($config['paths'])) {
             foreach ($config['paths'] as &$path) {
                 if (is_array($path)) {
-                    $path = $this->generator->generate($path['route'], $path['params'], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $path = $this->generator->generate(
+                        $path['route'],
+                        array_key_exists('params', $path) ? $path['params'] : array(),
+                        UrlGeneratorInterface::ABSOLUTE_URL
+                    );
                 }
                 if (substr($path, -3) === '.js') {
                     $path = substr($path, 0, -3);

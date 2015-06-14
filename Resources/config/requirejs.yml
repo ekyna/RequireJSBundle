@@ -3,3 +3,5 @@ config:
         'json': 'bundles/ekynarequirejs/plugin/json'
         'text': 'bundles/ekynarequirejs/plugin/text'
         'domReady': 'bundles/ekynarequirejs/plugin/domReady'
+build:
+    include: ['json', 'text', 'domReady']

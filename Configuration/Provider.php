@@ -134,7 +134,8 @@ class Provider
         $config['build']['paths'] = array_merge($config['build']['paths'], $paths);
         $config['build']['include'] = array_merge(
             array_keys($paths),
-            array_keys($config['config']['paths'])
+            //array_keys($config['config']['paths'])
+            $config['build']['include']
         );
         return $config['build'];
     }

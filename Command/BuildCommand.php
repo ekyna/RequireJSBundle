@@ -49,7 +49,7 @@ class BuildCommand extends ContainerAwareCommand
         $mainConfigContent = "require(\n" . $jsonConfig . "\n);";
         $mainConfigContent = str_replace(',', ",\n", $mainConfigContent);
         $mainConfigFilePath = $webRoot . DIRECTORY_SEPARATOR . self::MAIN_CONFIG_FILE_NAME;
-        if (false === @file_put_contents($mainConfigFilePath, $mainConfigContent)) {
+        if (false === file_put_contents($mainConfigFilePath, $mainConfigContent)) {
             throw new \RuntimeException('Unable to write file ' . $mainConfigFilePath);
         }
 
@@ -57,7 +57,7 @@ class BuildCommand extends ContainerAwareCommand
         $buildConfigContent = $configProvider->generateBuildConfig(self::MAIN_CONFIG_FILE_NAME);
         $buildConfigContent = '(' . json_encode($buildConfigContent) . ')';
         $buildConfigFilePath = $webRoot . DIRECTORY_SEPARATOR . self::BUILD_CONFIG_FILE_NAME;
-        if (false === @file_put_contents($buildConfigFilePath, $buildConfigContent)) {
+        if (false === file_put_contents($buildConfigFilePath, $buildConfigContent)) {
             throw new \RuntimeException('Unable to write file ' . $buildConfigFilePath);
         }
 
@@ -84,7 +84,7 @@ class BuildCommand extends ContainerAwareCommand
             }
 
             $output->writeln('Cleaning up');
-            if (false === @unlink($buildConfigFilePath)) {
+            if (false === unlink($buildConfigFilePath)) {
                 throw new \RuntimeException('Unable to remove file ' . $buildConfigFilePath);
             }
 

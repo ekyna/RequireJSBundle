@@ -49,7 +49,7 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->enumNode('optimize')
-                            ->values(array('uglify', 'uglify2', 'closure', 'closure.keepLines', 'none'))
+                            ->values(['uglify', 'uglify2', 'closure', 'closure.keepLines', 'none'])
                             ->defaultValue('uglify2')
                         ->end()
                         ->booleanNode('generateSourceMaps')->defaultFalse()->end()
@@ -80,10 +80,10 @@ class Configuration implements ConfigurationInterface
         $jsEngines = ['node', 'nodejs', 'rhino'];
         $availableJsEngines = [];
         foreach ($jsEngines as $engine) {
-            $jsExists = new ProcessBuilder(array($engine, '-help'));
+            $jsExists = new ProcessBuilder([$engine, '-help']);
             $jsExists = $jsExists->getProcess();
             if (isset($_SERVER['PATH'])) {
-                $jsExists->setEnv(array('PATH' => $_SERVER['PATH']));
+                $jsExists->setEnv(['PATH' => $_SERVER['PATH']]);
             }
             $jsExists->run();
             if ($jsExists->getErrorOutput() === null) {

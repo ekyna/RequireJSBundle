@@ -100,7 +100,7 @@ class Provider
                 if (is_array($path)) {
                     $path = $this->generator->generate(
                         $path['route'],
-                        array_key_exists('params', $path) ? $path['params'] : array(),
+                        array_key_exists('params', $path) ? $path['params'] : [],
                         UrlGeneratorInterface::ABSOLUTE_URL
                     );
                 }
@@ -125,12 +125,12 @@ class Provider
         $config['build']['baseUrl'] = './';
         $config['build']['out'] = './' . $config['build_path'];
         $config['build']['mainConfigFile'] = './' . $configPath;
-        $paths = array(
+        $paths = [
             // build-in configuration
             'require-config' => './' . substr($configPath, 0, -3),
             // build-in require.js lib
             'require-lib' => 'bundles/ekynarequirejs/require',
-        );
+        ];
         $config['build']['paths'] = array_merge($config['build']['paths'], $paths);
         $config['build']['include'] = array_merge(
             array_keys($paths),
@@ -151,8 +151,8 @@ class Provider
             $config = $this->config;
             foreach ($this->bundles as $bundle) {
                 $reflection = new \ReflectionClass($bundle);
-                if (is_file($file = dirname($reflection->getFilename()) . '/Resources/config/requirejs.yml')) {
-                    $bundleConfig = Yaml::parse(realpath($file));
+                if (is_file($file = dirname($reflection->getFileName()) . '/Resources/config/requirejs.yml')) {
+                    $bundleConfig = Yaml::parse(file_get_contents(realpath($file)));
                     $config = array_merge_recursive($config, $bundleConfig);
                 }
             }

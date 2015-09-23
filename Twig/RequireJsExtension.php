@@ -54,9 +54,9 @@ class RequireJsExtension extends \Twig_Extension
      */
     public function getFunctions()
     {
-        return array(
-            new \Twig_SimpleFunction('require_js', array($this, 'renderRequireJs'), array('is_safe' => array('html'))),
-        );
+        return [
+            new \Twig_SimpleFunction('require_js', [$this, 'renderRequireJs'], ['is_safe' => ['html']]),
+        ];
     }
 
     /**
@@ -72,11 +72,11 @@ class RequireJsExtension extends \Twig_Extension
             $compressed = false;
         }
 
-        return $this->template->render(array(
+        return $this->template->render([
             'compressed' => $compressed,
             'build_path' => $this->config['build_path'],
             'config'     => $this->provider->getMainConfig(),
-        ));
+        ]);
     }
 
     /**

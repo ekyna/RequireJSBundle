@@ -1,0 +1,7 @@
+{
+    "devDependencies": {
+        "domReady": "^2.0.1",
+        "text": "^2.0.15",
+        "requirejs-plugins": "^1.0.3"
+    }
+}

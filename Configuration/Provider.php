@@ -1,10 +1,10 @@
 <?php
 
 namespace Ekyna\Bundle\RequireJsBundle\Configuration;
+
 use Doctrine\Common\Cache\CacheProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Yaml\Yaml;
-
 
 /**
  * Class Provider

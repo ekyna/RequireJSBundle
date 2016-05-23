@@ -79,6 +79,7 @@ class Configuration implements ConfigurationInterface
     {
         $jsEngines = ['node', 'nodejs', 'rhino'];
         $availableJsEngines = [];
+
         foreach ($jsEngines as $engine) {
             $jsExists = new ProcessBuilder([$engine, '-help']);
             $jsExists = $jsExists->getProcess();
@@ -86,10 +87,11 @@ class Configuration implements ConfigurationInterface
                 $jsExists->setEnv(['PATH' => $_SERVER['PATH']]);
             }
             $jsExists->run();
-            if ($jsExists->getErrorOutput() === null) {
+            if (0 == strlen($jsExists->getErrorOutput())) {
                 $availableJsEngines[] = $engine;
             }
         }
+
         return $availableJsEngines ? reset($availableJsEngines) : null;
     }
 }

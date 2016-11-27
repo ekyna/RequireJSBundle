@@ -101,7 +101,7 @@ class Provider
                     $path = $this->generator->generate(
                         $path['route'],
                         array_key_exists('params', $path) ? $path['params'] : [],
-                        UrlGeneratorInterface::ABSOLUTE_URL
+                        UrlGeneratorInterface::ABSOLUTE_PATH
                     );
                 }
                 if (substr($path, -3) === '.js') {

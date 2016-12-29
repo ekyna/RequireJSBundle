@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\RequireJsBundle\Command;
 use Ekyna\Bundle\RequireJsBundle\Configuration\Provider;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 
@@ -17,7 +18,7 @@ class BuildCommand extends ContainerAwareCommand
 {
     const MAIN_CONFIG_FILE_NAME  = 'js/require-config.js';
     const BUILD_CONFIG_FILE_NAME = 'build.js';
-    const OPTIMIZER_FILE_PATH    = 'bundles/ekynarequirejs/r.js';
+    const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
 
 
     /**
@@ -28,6 +29,7 @@ class BuildCommand extends ContainerAwareCommand
         $this
             ->setName('ekyna:requirejs:build')
             ->setDescription('Build single optimized js resource')
+            ->addOption('optimizer', 'o', InputOption::VALUE_NONE, 'Whether or not to run r.js optimizer.')
         ;
     }
 
@@ -59,6 +61,11 @@ class BuildCommand extends ContainerAwareCommand
         $buildConfigFilePath = $webRoot . DIRECTORY_SEPARATOR . self::BUILD_CONFIG_FILE_NAME;
         if (false === @file_put_contents($buildConfigFilePath, $buildConfigContent)) {
             throw new \RuntimeException('Unable to write file ' . $buildConfigFilePath);
+        }
+
+        if (!$input->getOption('optimizer')) {
+            $output->writeln('You can now run "r.js -o web/build.js".');
+            return;
         }
 
         if (isset($config['js_engine']) && $config['js_engine']) {

@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\RequireJsBundle\Command;
 
 use Ekyna\Bundle\RequireJsBundle\Configuration\Provider;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use RuntimeException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -12,38 +15,40 @@ use Symfony\Component\Process\Process;
 /**
  * Class BuildCommand
  * @package Ekyna\Bundle\RequireJsBundle\Command
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class BuildCommand extends ContainerAwareCommand
+class BuildCommand extends Command
 {
-    const MAIN_CONFIG_FILE_NAME  = 'js/require-config.js';
-    const BUILD_CONFIG_FILE_NAME = 'build.js';
-    const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
+    protected static $defaultName = 'ekyna:requirejs:build';
+
+    private const MAIN_CONFIG_FILE_NAME  = 'js/require-config.js';
+    private const BUILD_CONFIG_FILE_NAME = 'build.js';
+    private const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
+
+    private Provider $provider;
 
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function configure()
+    public function __construct(Provider $provider)
+    {
+        parent::__construct();
+
+        $this->provider = $provider;
+    }
+
+    protected function configure(): void
     {
         $this
-            ->setName('ekyna:requirejs:build')
             ->setDescription('Build single optimized js resource')
             ->addOption('optimizer', 'o', InputOption::VALUE_NONE, 'Whether or not to run r.js optimizer.');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var Provider $configProvider */
-        $configProvider = $this->getContainer()->get('ekyna_require_js.configuration_provider');
-        $config = $configProvider->getConfig();
+        $config = $this->provider->getConfig();
         $webRoot = realpath($config['web_root']);
 
         $output->writeln('Generating require.js main config');
-        $jsonConfig = json_encode($configProvider->generateMainConfig());
+        $jsonConfig = json_encode($this->provider->generateMainConfig());
         // for some reason built application gets broken with configuration in "oneline-json"
         $mainConfigContent = "require(\n" . $jsonConfig . "\n);";
         $mainConfigContent = str_replace(',', ",\n", $mainConfigContent);
@@ -51,31 +56,35 @@ class BuildCommand extends ContainerAwareCommand
         $mainConfigDirectory = dirname($mainConfigFilePath);
         if (!is_dir($mainConfigDirectory)) {
             if (!mkdir($mainConfigDirectory)) {
-                throw new \RuntimeException('Unable to create directory ' . $mainConfigDirectory);
+                throw new RuntimeException('Unable to create directory ' . $mainConfigDirectory);
             }
         }
-        if (false === @file_put_contents($mainConfigFilePath, $mainConfigContent)) {
-            throw new \RuntimeException('Unable to write file ' . $mainConfigFilePath);
+        if (false === file_put_contents($mainConfigFilePath, $mainConfigContent)) {
+            throw new RuntimeException('Unable to write file ' . $mainConfigFilePath);
         }
 
         $output->writeln('Generating require.js build config');
-        $buildConfigContent = $configProvider->generateBuildConfig(self::MAIN_CONFIG_FILE_NAME);
+        $buildConfigContent = $this->provider->generateBuildConfig(self::MAIN_CONFIG_FILE_NAME);
         $buildConfigContent = '(' . json_encode($buildConfigContent) . ')';
         $buildConfigFilePath = $webRoot . DIRECTORY_SEPARATOR . self::BUILD_CONFIG_FILE_NAME;
-        if (false === @file_put_contents($buildConfigFilePath, $buildConfigContent)) {
-            throw new \RuntimeException('Unable to write file ' . $buildConfigFilePath);
+        if (false === file_put_contents($buildConfigFilePath, $buildConfigContent)) {
+            throw new RuntimeException('Unable to write file ' . $buildConfigFilePath);
         }
 
         if (!$input->getOption('optimizer')) {
-            $output->writeln('You can now run "r.js -o web/build.js".');
-            return;
+            $output->writeln('You can now run "r.js -o public/build.js".');
+
+            return Command::SUCCESS;
         }
 
         if (isset($config['js_engine']) && $config['js_engine']) {
             $output->writeln('Running code optimizer');
-            $command = $config['js_engine'] . ' ' .
-                self::OPTIMIZER_FILE_PATH . ' -o ' .
-                $buildConfigFilePath; // . ' 1>&2';
+            $command = [
+                $config['js_engine'],
+                self::OPTIMIZER_FILE_PATH,
+                '-o' .
+                $buildConfigFilePath
+            ]; // . ' 1>&2';
             $process = new Process($command, $webRoot);
             $process->setTimeout($config['building_timeout']);
             // some workaround when this command is launched from web
@@ -90,7 +99,7 @@ class BuildCommand extends ContainerAwareCommand
             if (!$process->isSuccessful()) {
                 $output->writeln($command);
                 $output->writeln($process->getOutput());
-                throw new \RuntimeException($process->getErrorOutput());
+                throw new RuntimeException($process->getErrorOutput());
             }
 
             $output->writeln(
@@ -106,7 +115,9 @@ class BuildCommand extends ContainerAwareCommand
 
         $output->writeln('Cleaning up');
         if (false === unlink($buildConfigFilePath)) {
-            throw new \RuntimeException('Unable to remove file ' . $buildConfigFilePath);
+            throw new RuntimeException('Unable to remove file ' . $buildConfigFilePath);
         }
+
+        return Command::SUCCESS;
     }
 }

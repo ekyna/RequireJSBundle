@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ekyna\Bundle\RequireJsBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Process\ProcessBuilder;
+use Symfony\Component\Process\Process;
 
 /**
  * Class Configuration
@@ -14,14 +16,15 @@ use Symfony\Component\Process\ProcessBuilder;
 class Configuration implements ConfigurationInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritDoc
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('ekyna_require_js');
+        $builder = new TreeBuilder('ekyna_require_js');
 
-        $rootNode
+        $root = $builder->getRootNode();
+
+        $root
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('template')->defaultValue('@EkynaRequireJs/require_js.html.twig')->end()
@@ -43,7 +46,7 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
 
-                ->scalarNode('web_root')->defaultValue('%kernel.root_dir%/../web')->end()
+                ->scalarNode('web_root')->defaultValue('%kernel.project_dir%/public')->end()
                 ->scalarNode('js_engine')->defaultNull()->end()
                 ->scalarNode('build_path')->defaultValue('js/app.min.js')->end()
                 ->integerNode('building_timeout')->min(1)->defaultValue(180)->end()
@@ -72,29 +75,28 @@ class Configuration implements ConfigurationInterface
             ->end()
         ;
 
-        return $treeBuilder;
+        return $builder;
     }
 
     /**
      * @return string|null
      */
-    public static function getDefaultJsEngine()
+    public static function getDefaultJsEngine(): ?string
     {
-        $jsEngines = ['node', 'nodejs', 'rhino'];
-        $availableJsEngines = [];
+        $engines = ['node', 'nodejs', 'rhino'];
+        $available = [];
 
-        foreach ($jsEngines as $engine) {
-            $jsExists = new ProcessBuilder([$engine, '-help']);
-            $jsExists = $jsExists->getProcess();
+        foreach ($engines as $engine) {
+            $exists = new Process([$engine, '-help']);
             if (isset($_SERVER['PATH'])) {
-                $jsExists->setEnv(['PATH' => $_SERVER['PATH']]);
+                $exists->setEnv(['PATH' => $_SERVER['PATH']]);
             }
-            $jsExists->run();
-            if (0 == strlen($jsExists->getErrorOutput())) {
-                $availableJsEngines[] = $engine;
+            $exists->run();
+            if (empty($exists->getErrorOutput())) {
+                $available[] = $engine;
             }
         }
 
-        return $availableJsEngines ? reset($availableJsEngines) : null;
+        return $available ? reset($available) : null;
     }
 }

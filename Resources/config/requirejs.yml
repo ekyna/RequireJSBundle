@@ -1,7 +1,0 @@
-config:
-    paths:
-        'domReady': 'bundles/ekynarequirejs/plugin/domReady'
-        'json': 'bundles/ekynarequirejs/plugin/json'
-        'text': 'bundles/ekynarequirejs/plugin/text'
-build:
-    include: ['domReady', 'json', 'text']

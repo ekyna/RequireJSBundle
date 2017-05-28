@@ -1,28 +1,27 @@
 {
-    "name" : "ekyna/require-js-bundle",
-    "description" : "RequireJs for Symfony2",
-    "type" : "symfony-bundle",
-    "authors" : [{
-            "name" : "Etienne Dauvergne",
-            "homepage" : "http://ekyna.com"
+    "name": "ekyna/require-js-bundle",
+    "description": "RequireJs for Symfony2",
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Etienne Dauvergne",
+            "homepage": "http://ekyna.com"
         }
     ],
-    "keywords" : [
-        "symfony2",
+    "keywords": [
+        "symfony",
         "requirejs",
         "bundle"
     ],
-    "homepage" : "https://github.com/ekyna/RequireJsBundle",
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "php" : ">=5.5.9",
+    "homepage": "https://github.com/ekyna/RequireJsBundle",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5.9",
         "symfony/framework-bundle": "^3.0"
     },
-    "autoload" : {
-        "psr-4" : {
-            "Ekyna\\Bundle\\RequireJsBundle\\" : ""
+    "autoload": {
+        "psr-4": {
+            "Ekyna\\Bundle\\RequireJsBundle\\": ""
         }
     }
 }

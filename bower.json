@@ -1,4 +1,7 @@
 {
+    "name": "ekyna/RequireJsBundle",
+    "license": "UNLICENSED",
+    "private": true,
     "devDependencies": {
         "domReady": "^2.0.1",
         "text": "^2.0.15",

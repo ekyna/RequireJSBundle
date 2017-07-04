@@ -25,6 +25,7 @@ class EkynaRequireJsExtension extends Extension
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
 
-        $container->setParameter('ekyna_require_js.config', $config);
+        $providerDef = $container->getDefinition('ekyna_require_js.configuration_provider');
+        $providerDef->replaceArgument(1, $config);
     }
 }

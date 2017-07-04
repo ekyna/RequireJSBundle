@@ -2,6 +2,8 @@
 
 namespace Ekyna\Bundle\RequireJsBundle;
 
+use Ekyna\Bundle\RequireJsBundle\DependencyInjection\Compiler\ConfigurationProviderPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -11,4 +13,11 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class EkynaRequireJsBundle extends Bundle
 {
+    /**
+     * @inheritDoc
+     */
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new ConfigurationProviderPass());
+    }
 }

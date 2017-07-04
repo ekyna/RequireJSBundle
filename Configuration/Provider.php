@@ -3,6 +3,7 @@
 namespace Ekyna\Bundle\RequireJsBundle\Configuration;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Symfony\Component\Asset\VersionStrategy\VersionStrategyInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -24,6 +25,11 @@ class Provider
      * @var CacheProvider
      */
     private $cache;
+
+    /**
+     * @var VersionStrategyInterface
+     */
+    private $versionStrategy;
 
     /**
      * @var array
@@ -66,6 +72,26 @@ class Provider
     }
 
     /**
+     * Sets the version strategy.
+     *
+     * @param VersionStrategyInterface $strategy
+     */
+    public function setVersionStrategy($strategy)
+    {
+        $this->versionStrategy = $strategy;
+    }
+
+    /**
+     * Returns the config.
+     *
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
      * Fetches piece of JS-code with require.js main config from cache
      * or if it was not there - generates and put into a cache
      *
@@ -95,6 +121,7 @@ class Provider
     {
         $requirejs = $this->collectConfigs();
         $config = $requirejs['config'];
+
         if (!empty($config['paths']) && is_array($config['paths'])) {
             foreach ($config['paths'] as &$path) {
                 if (is_array($path)) {
@@ -109,7 +136,13 @@ class Provider
                 }
             }
         }
+
         $config['baseUrl'] = '/';
+
+        if (null !== $this->versionStrategy) {
+            $config['urlArgs'] = ltrim($this->versionStrategy->applyVersion('/'), '?/');
+        }
+
         return $config;
     }
 

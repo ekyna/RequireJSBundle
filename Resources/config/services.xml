@@ -7,16 +7,17 @@
     <services>
 
         <!-- Configuration provider -->
-        <service id="ekyna_require_js.configuration_provider" class="Ekyna\Bundle\RequireJsBundle\Configuration\Provider">
+        <service id="ekyna_require_js.configuration_provider"
+                 class="Ekyna\Bundle\RequireJsBundle\Configuration\Provider">
             <argument type="service" id="router" />
-            <argument>%ekyna_require_js.config%</argument>
+            <argument/><!-- Config -->
             <argument>%kernel.bundles%</argument>
         </service>
 
         <!-- Twig extension -->
-        <service id="ekyna_require_js.twig.require_js_extension" class="Ekyna\Bundle\RequireJsBundle\Twig\RequireJsExtension">
+        <service id="ekyna_require_js.twig.require_js_extension"
+                 class="Ekyna\Bundle\RequireJsBundle\Twig\RequireJsExtension">
             <argument type="service" id="ekyna_require_js.configuration_provider" />
-            <argument>%ekyna_require_js.config%</argument>
             <tag name="twig.extension" />
         </service>
 

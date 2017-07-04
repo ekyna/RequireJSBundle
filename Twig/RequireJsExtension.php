@@ -31,12 +31,11 @@ class RequireJsExtension extends \Twig_Extension
      * Constructor.
      *
      * @param Provider $provider
-     * @param array    $config
      */
-    public function __construct(Provider $provider, array $config)
+    public function __construct(Provider $provider)
     {
         $this->provider = $provider;
-        $this->config   = $config;
+        $this->config   = $provider->getConfig();
     }
 
     /**

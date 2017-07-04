@@ -29,8 +29,7 @@ class BuildCommand extends ContainerAwareCommand
         $this
             ->setName('ekyna:requirejs:build')
             ->setDescription('Build single optimized js resource')
-            ->addOption('optimizer', 'o', InputOption::VALUE_NONE, 'Whether or not to run r.js optimizer.')
-        ;
+            ->addOption('optimizer', 'o', InputOption::VALUE_NONE, 'Whether or not to run r.js optimizer.');
     }
 
     /**
@@ -38,12 +37,10 @@ class BuildCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var array $config */
-        $config = $this->getContainer()->getParameter('ekyna_require_js.config');
-        $webRoot = realpath($config['web_root']);
-
         /** @var Provider $configProvider */
         $configProvider = $this->getContainer()->get('ekyna_require_js.configuration_provider');
+        $config = $configProvider->getConfig();
+        $webRoot = realpath($config['web_root']);
 
         $output->writeln('Generating require.js main config');
         $jsonConfig = json_encode($configProvider->generateMainConfig());

@@ -17,7 +17,7 @@ use Symfony\Component\Process\Process;
 class BuildCommand extends ContainerAwareCommand
 {
     const MAIN_CONFIG_FILE_NAME  = 'js/require-config.js';
-    const BUILD_CONFIG_FILE_NAME = 'build.js';
+    const BUILD_CONFIG_FILE_NAME = 'js/build.js';
     const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
 
 
@@ -48,6 +48,12 @@ class BuildCommand extends ContainerAwareCommand
         $mainConfigContent = "require(\n" . $jsonConfig . "\n);";
         $mainConfigContent = str_replace(',', ",\n", $mainConfigContent);
         $mainConfigFilePath = $webRoot . DIRECTORY_SEPARATOR . self::MAIN_CONFIG_FILE_NAME;
+        $mainConfigDirectory = dirname($mainConfigFilePath);
+        if (!is_dir($mainConfigDirectory)) {
+            if (!mkdir($mainConfigDirectory)) {
+                throw new \RuntimeException('Unable to create directory ' . $mainConfigDirectory);
+            }
+        }
         if (false === @file_put_contents($mainConfigFilePath, $mainConfigContent)) {
             throw new \RuntimeException('Unable to write file ' . $mainConfigFilePath);
         }

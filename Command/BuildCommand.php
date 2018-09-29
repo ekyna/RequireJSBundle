@@ -17,7 +17,7 @@ use Symfony\Component\Process\Process;
 class BuildCommand extends ContainerAwareCommand
 {
     const MAIN_CONFIG_FILE_NAME  = 'js/require-config.js';
-    const BUILD_CONFIG_FILE_NAME = 'js/build.js';
+    const BUILD_CONFIG_FILE_NAME = 'build.js';
     const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
 
 

@@ -24,7 +24,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->addDefaultsIfNotSet()
             ->children()
-                ->scalarNode('template')->defaultValue('EkynaRequireJsBundle::require_js.html.twig')->end()
+                ->scalarNode('template')->defaultValue('@EkynaRequireJs/require_js.html.twig')->end()
 
                 ->arrayNode('config')
                     ->addDefaultsIfNotSet()

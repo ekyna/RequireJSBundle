@@ -7,7 +7,7 @@ use Ekyna\Bundle\RequireJsBundle\Configuration\Provider;
 /**
  * Class RequireJsExtension
  * @package Ekyna\Bundle\RequireJsBundle\Twig
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class RequireJsExtension extends \Twig_Extension
 {
@@ -15,16 +15,6 @@ class RequireJsExtension extends \Twig_Extension
      * @var Provider
      */
     protected $provider;
-
-    /**
-     * @var array
-     */
-    protected $config;
-
-    /**
-     * @var \Twig_Template
-     */
-    protected $template;
 
 
     /**
@@ -35,64 +25,42 @@ class RequireJsExtension extends \Twig_Extension
     public function __construct(Provider $provider)
     {
         $this->provider = $provider;
-        $this->config   = $provider->getConfig();
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        if (!$this->template instanceof \Twig_Template) {
-            $this->template = $environment->loadTemplate($this->config['template']);
-        }
-    }
-
-    /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('require_js', [$this, 'renderRequireJs'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction(
+                'require_js',
+                [$this, 'renderRequireJs'],
+                ['is_safe' => ['html'], 'needs_environment' => true]
+            ),
         ];
     }
 
     /**
      * Renders the RequireJs initialisation script.
      *
-     * @param bool $compressed
+     * @param \Twig_Environment $env
+     * @param bool              $compressed
+     *
      * @return string
      */
-    public function renderRequireJs($compressed = true)
+    public function renderRequireJs(\Twig_Environment $env, $compressed = true)
     {
-        if ($compressed && !$this->buildFileExists()) {
-            // TODO throw exception ?
-            $compressed = false;
+        $config = $this->provider->getConfig();
+
+        if ($compressed && !file_exists($config['web_root'] . DIRECTORY_SEPARATOR . $config['build_path'])) {
+            throw new \RuntimeException("Build file does not exists.");
         }
 
-        return $this->template->render([
+        return $env->render($config['template'], [
             'compressed' => $compressed,
-            'build_path' => $this->config['build_path'],
+            'build_path' => $config['build_path'],
             'config'     => $this->provider->getMainConfig(),
         ]);
-    }
-
-    /**
-     * Checks if the build file exists.
-     *
-     * @return bool
-     */
-    private function buildFileExists()
-    {
-        return file_exists($this->config['web_root'] . DIRECTORY_SEPARATOR . $this->config['build_path']);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return 'ekyna_require_js';
     }
 }

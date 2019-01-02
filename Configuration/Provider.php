@@ -188,6 +188,10 @@ class Provider
                     $bundleConfig = Yaml::parse(file_get_contents(realpath($file)));
                     $config = array_merge_recursive($config, $bundleConfig);
                 }
+                if (is_file($file = dirname($reflection->getFileName()) . '/Resources/config/requirejs_dev.yml')) {
+                    $bundleConfig = Yaml::parse(file_get_contents(realpath($file)));
+                    $config = array_merge_recursive($config, $bundleConfig);
+                }
             }
             $this->collectedConfig = $config;
         }

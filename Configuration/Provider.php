@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Class Provider
  * @package Ekyna\Bundle\RequireJsBundle\Configuration
- * @author Étienne Dauvergne <contact@ekyna.com>
+ * @author  Étienne Dauvergne <contact@ekyna.com>
  */
 class Provider
 {
@@ -57,8 +57,8 @@ class Provider
     public function __construct(UrlGeneratorInterface $generator, array $config, array $bundles)
     {
         $this->generator = $generator;
-        $this->config    = $config;
-        $this->bundles   = $bundles;
+        $this->config = $config;
+        $this->bundles = $bundles;
     }
 
     /**
@@ -109,6 +109,7 @@ class Provider
                 $this->cache->save(self::CONFIG_CACHE_KEY, $config);
             }
         }
+
         return $config;
     }
 
@@ -150,6 +151,7 @@ class Provider
      * Generates build config for require.js
      *
      * @param string $configPath path to require.js main config
+     *
      * @return array
      */
     public function generateBuildConfig($configPath)
@@ -162,7 +164,7 @@ class Provider
             // build-in configuration
             'require-config' => './' . substr($configPath, 0, -3),
             // build-in require.js lib
-            'require-lib' => 'bundles/ekynarequirejs/require',
+            'require-lib'    => 'bundles/ekynarequirejs/require',
         ];
         $config['build']['paths'] = array_merge($config['build']['paths'], $paths);
         $config['build']['include'] = array_merge(
@@ -170,6 +172,7 @@ class Provider
             //array_keys($config['config']['paths'])
             $config['build']['include']
         );
+
         return $config['build'];
     }
 
@@ -184,17 +187,19 @@ class Provider
             $config = $this->config;
             foreach ($this->bundles as $bundle) {
                 $reflection = new \ReflectionClass($bundle);
-                if (is_file($file = dirname($reflection->getFileName()) . '/Resources/config/requirejs.yml')) {
+                $directory = dirname($reflection->getFileName());
+                if (is_file($file = $directory . '/Resources/config/requirejs.yml')) {
                     $bundleConfig = Yaml::parse(file_get_contents(realpath($file)));
                     $config = array_merge_recursive($config, $bundleConfig);
                 }
-                if (is_file($file = dirname($reflection->getFileName()) . '/Resources/config/requirejs_dev.yml')) {
+                if (is_file($file = $directory . '/Resources/config/requirejs_' . $this->config['env'] . '.yml')) {
                     $bundleConfig = Yaml::parse(file_get_contents(realpath($file)));
                     $config = array_merge_recursive($config, $bundleConfig);
                 }
             }
             $this->collectedConfig = $config;
         }
+
         return $this->collectedConfig;
     }
 }

@@ -5,6 +5,7 @@ namespace Ekyna\Bundle\RequireJsBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -27,7 +28,15 @@ class EkynaRequireJsExtension extends Extension
 
         $config['env'] = $container->getParameter('kernel.environment');
 
-        $providerDef = $container->getDefinition('ekyna_require_js.configuration_provider');
-        $providerDef->replaceArgument(1, $config);
+        $strategy = $config['asset_strategy'];
+        unset($config['asset_strategy']);
+
+        $provider = $container
+            ->getDefinition('ekyna_require_js.configuration_provider')
+            ->replaceArgument(1, $config);
+
+        if (!empty($strategy)) {
+            $provider->addMethodCall('setVersionStrategy', [new Reference($strategy)]);
+        }
     }
 }

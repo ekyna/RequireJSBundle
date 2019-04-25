@@ -76,7 +76,7 @@ class Provider
      *
      * @param VersionStrategyInterface $strategy
      */
-    public function setVersionStrategy($strategy)
+    public function setVersionStrategy(VersionStrategyInterface $strategy)
     {
         $this->versionStrategy = $strategy;
     }
@@ -120,8 +120,11 @@ class Provider
      */
     public function generateMainConfig()
     {
-        $requirejs = $this->collectConfigs();
-        $config = $requirejs['config'];
+        $config = $this->collectConfigs()['config'];
+
+        $config = array_replace([
+            'baseUrl' => '/',
+        ], $config);
 
         if (!empty($config['paths']) && is_array($config['paths'])) {
             foreach ($config['paths'] as &$path) {
@@ -137,8 +140,6 @@ class Provider
                 }
             }
         }
-
-        $config['baseUrl'] = '/';
 
         if (null !== $this->versionStrategy) {
             $config['urlArgs'] = ltrim($this->versionStrategy->applyVersion('/'), '?/');
@@ -156,24 +157,29 @@ class Provider
      */
     public function generateBuildConfig($configPath)
     {
-        $config = $this->collectConfigs();
-        $config['build']['baseUrl'] = './';
-        $config['build']['out'] = './' . $config['build_path'];
-        $config['build']['mainConfigFile'] = './' . $configPath;
+        $all = $this->collectConfigs();
+
+        $config = array_replace([
+            'baseUrl'        => './',
+            'out'            => './' . $all['build_path'],
+            'mainConfigFile' => './' . $configPath,
+        ], $all['build']);
+
         $paths = [
             // build-in configuration
             'require-config' => './' . substr($configPath, 0, -3),
             // build-in require.js lib
             'require-lib'    => 'bundles/ekynarequirejs/require',
         ];
-        $config['build']['paths'] = array_merge($config['build']['paths'], $paths);
-        $config['build']['include'] = array_merge(
+        $config['paths'] = array_merge($config['paths'], $paths);
+
+        $config['include'] = array_merge(
             array_keys($paths),
             //array_keys($config['config']['paths'])
-            $config['build']['include']
+            $config['include']
         );
 
-        return $config['build'];
+        return $config;
     }
 
     /**

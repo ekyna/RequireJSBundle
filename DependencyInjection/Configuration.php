@@ -25,6 +25,7 @@ class Configuration implements ConfigurationInterface
             ->addDefaultsIfNotSet()
             ->children()
                 ->scalarNode('template')->defaultValue('@EkynaRequireJs/require_js.html.twig')->end()
+                ->scalarNode('asset_strategy')->defaultNull()->end()
 
                 ->arrayNode('config')
                     ->addDefaultsIfNotSet()
@@ -38,6 +39,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('enforceDefine')->end()
                         // @see http://requirejs.org/docs/api.html#config-scriptType
                         ->scalarNode('scriptType')->cannotBeEmpty()->end()
+                        ->scalarNode('baseUrl')->defaultValue('/')->cannotBeEmpty()->end()
                     ->end()
                 ->end()
 
@@ -56,6 +58,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('preserveLicenseComments')->defaultFalse()->end()
                         ->booleanNode('useSourceUrl')->defaultFalse()->end()
                         ->arrayNode('paths')->addDefaultsIfNotSet()->end()
+                        ->scalarNode('baseUrl')->defaultValue('./')->cannotBeEmpty()->end()
                     ->end()
                 ->end()
             ->end()

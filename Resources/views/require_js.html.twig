@@ -1,4 +1,4 @@
-{% spaceless %}
+{% apply spaceless -%}
 {% if compressed -%}
     <script type="text/javascript">
         var require = (function(){
@@ -8,11 +8,11 @@
         }());
         require = require.c;
     </script>
-    <script type="text/javascript" src="{{ asset(build_path) }}"></script>
+    <script type="text/javascript" src="{{ absolute_url(asset(build_path)) }}"></script>
 {%- else -%}
-    <script type="text/javascript" src="{{ asset('bundles/ekynarequirejs/require.js') }}"></script>
+    <script type="text/javascript" src="{{ absolute_url(asset('bundles/ekynarequirejs/require.js')) }}"></script>
     <script type="text/javascript">
         require.config({{ config|json_encode|raw }});
     </script>
 {%- endif %}
-{% endspaceless %}
+{%- endapply %}

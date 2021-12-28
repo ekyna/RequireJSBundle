@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Ekyna\Bundle\RequireJsBundle\Command;
 
-use Ekyna\Bundle\RequireJsBundle\Configuration\Provider;
+use Ekyna\Bundle\RequireJsBundle\Configuration\ProviderInterface;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -25,10 +25,10 @@ class BuildCommand extends Command
     private const BUILD_CONFIG_FILE_NAME = 'build.js';
     private const OPTIMIZER_FILE_PATH    = 'node_modules/requirejs/bin/r.js';
 
-    private Provider $provider;
+    private ProviderInterface $provider;
 
 
-    public function __construct(Provider $provider)
+    public function __construct(ProviderInterface $provider)
     {
         parent::__construct();
 

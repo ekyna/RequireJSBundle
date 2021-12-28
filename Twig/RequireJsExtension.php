@@ -15,9 +15,6 @@ use Twig\TwigFunction;
  */
 class RequireJsExtension extends AbstractExtension
 {
-    /**
-     * @inheritDoc
-     */
     public function getFunctions(): array
     {
         return [

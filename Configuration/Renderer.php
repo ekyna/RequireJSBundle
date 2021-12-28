@@ -16,20 +16,17 @@ use const DIRECTORY_SEPARATOR;
  * @package Ekyna\Bundle\RequireJsBundle\Configuration
  * @author  Étienne Dauvergne <contact@ekyna.com>
  */
-class Renderer
+class Renderer implements RendererInterface
 {
-    private Provider $provider;
-    private Environment $twig;
+    private ProviderInterface $provider;
+    private Environment       $twig;
 
-    public function __construct(Provider $provider, Environment $twig)
+    public function __construct(ProviderInterface $provider, Environment $twig)
     {
         $this->provider = $provider;
         $this->twig = $twig;
     }
 
-    /**
-     * Renders the require js initialisation script.
-     */
     public function render(bool $compressed = true): string
     {
         $config = $this->provider->getConfig();

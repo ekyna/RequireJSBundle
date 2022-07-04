@@ -55,7 +55,7 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->enumNode('optimize')
                             ->values(['uglify', 'uglify2', 'closure', 'closure.keepLines', 'none'])
-                            ->defaultValue('uglify2')
+                            ->defaultValue('none')
                         ->end()
                         ->booleanNode('generateSourceMaps')->defaultFalse()->end()
                         ->booleanNode('preserveLicenseComments')->defaultFalse()->end()
